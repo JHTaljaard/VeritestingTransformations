@@ -150,7 +150,7 @@ public class FixedPointWrapper {
         collectTransformationState(arraySSAVisitor);
 
         /* Simplification iteration */
-        if (VeritestingListener.simplify) {
+        if (VeritestingListener.simplifyConfig) {
             SimplifyStmtVisitor simplifyStmtVisitor = SimplifyStmtVisitor.create(intermediateRegion);
             intermediateRegion = simplifyStmtVisitor.execute();
             collectTransformationState(simplifyStmtVisitor);

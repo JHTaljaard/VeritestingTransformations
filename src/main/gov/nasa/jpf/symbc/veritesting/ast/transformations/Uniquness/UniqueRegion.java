@@ -75,7 +75,7 @@ public class UniqueRegion {
         newDynRegion.arrayOutputs = newDynRegion.arrayOutputs.makeUnique(uniqueNum);
 
 
-        if(VeritestingListener.simplify)
+        if(VeritestingListener.simplifyConfig)
             newDynRegion.constantsTable = makeConstantsTableUnique(newDynRegion.constantsTable, uniqueNum);
 
         return newDynRegion;

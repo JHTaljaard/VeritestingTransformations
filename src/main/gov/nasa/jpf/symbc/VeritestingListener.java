@@ -94,7 +94,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
     public static long solverAllocTime = 0;
     public static long cleanupTime = 0;
     public static int solverCount = 0;
-    public static final int maxStaticExplorationDepth = 1;
+    public static final int maxStaticExplorationDepth = 2;
     public static boolean initializeTime = true;
     public static int veritestRegionCount = 0;
     private static long staticAnalysisDur;
@@ -102,7 +102,8 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
     public static StatisticManager statisticManager = new StatisticManager();
     private static int veritestRegionExpectedCount = -1;
     private static int instantiationLimit = -1;
-    public static boolean simplify = true;
+    public static boolean simplifyConfig = true;
+    public static boolean fixedPointConfig = true;
 
     public enum VeritestingMode {VANILLASPF, VERITESTING, HIGHORDER, SPFCASES}
 
@@ -184,7 +185,10 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
                 instantiationLimit = conf.getInt("instantiationLimit");
 
             if (conf.hasValue("simplify"))
-                simplify = conf.getBoolean("simplify");
+                simplifyConfig = conf.getBoolean("simplify");
+
+            if (conf.hasValue("fixedPoint"))
+                fixedPointConfig = conf.getBoolean("fixedPoint");
 
             StatisticManager.veritestingRunning = true;
             jpf.addPublisherExtension(ConsolePublisher.class, this);
@@ -376,25 +380,31 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
 
         boolean somethingChanged = true;
         FixedPointWrapper.resetWrapper();
-        do {
-            while (somethingChanged) {
+
+        if(fixedPointConfig) {
+            do {
+                while (somethingChanged) {
 
             /*-------------- SUBSTITUTION & HIGH ORDER TRANSFORMATION ---------------*/
             /*--------------  FIELD TRANSFORMATION ---------------*/
             /*-------------- ARRAY TRANSFORMATION TRANSFORMATION ---------------*/
-                dynRegion = FixedPointWrapper.executeFixedPointTransformations(ti, dynRegion);
-                somethingChanged = FixedPointWrapper.isChangedFlag();
+                    dynRegion = FixedPointWrapper.executeFixedPointTransformations(ti, dynRegion);
+                    somethingChanged = FixedPointWrapper.isChangedFlag();
 
+                    assert (FixedPointWrapper.isChangedFlag() == !FixedPointWrapper.isEqualRegion());
+                }
+            /*-------------- HIGH ORDER TRANSFORMATION ---------------*/
+                dynRegion = FixedPointWrapper.executeFixedPointHighOrder(ti, dynRegion);
+                somethingChanged = FixedPointWrapper.isChangedFlag();
+                transformationException = FixedPointWrapper.getFirstException();
                 assert (FixedPointWrapper.isChangedFlag() == !FixedPointWrapper.isEqualRegion());
             }
-            /*-------------- HIGH ORDER TRANSFORMATION ---------------*/
-            dynRegion = FixedPointWrapper.executeFixedPointHighOrder(ti, dynRegion);
-            somethingChanged = FixedPointWrapper.isChangedFlag();
-            transformationException = FixedPointWrapper.getFirstException();
-            assert (FixedPointWrapper.isChangedFlag() == !FixedPointWrapper.isEqualRegion());
+            while (somethingChanged);
         }
-        while(somethingChanged);
-
+        else{
+            dynRegion = FixedPointWrapper.executeFixedPointTransformations(ti, dynRegion);
+            transformationException = FixedPointWrapper.getFirstException();
+        }
 
         if (transformationException != null) throw transformationException;
 
@@ -402,7 +412,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
 
         dynRegion = UniqueRegion.execute(dynRegion);
 
-        if (simplify) {
+        if (simplifyConfig) {
             Iterator<Map.Entry<Variable, Expression>> itr = dynRegion.constantsTable.table.entrySet().iterator();
         /*
         ArrayRefVarExpr, FieldRefVarExpr, WalaVarExpr should be unique at this point because UniqueRegion should have
@@ -528,7 +538,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
             Variable var = dynOutputTable.lookup(slot);
             assert (var instanceof WalaVarExpr);
             Expression symVar;
-            if (simplify && dynRegion.constantsTable.lookup(var) != null) {
+            if (simplifyConfig && dynRegion.constantsTable.lookup(var) != null) {
                 symVar = dynRegion.constantsTable.lookup(var);
                 if (symVar instanceof CloneableVariable)
                     symVar = createGreenVar((String) dynRegion.varTypeTable.lookup(var), symVar.toString()); // assumes toString() would return the same string as getSymName()

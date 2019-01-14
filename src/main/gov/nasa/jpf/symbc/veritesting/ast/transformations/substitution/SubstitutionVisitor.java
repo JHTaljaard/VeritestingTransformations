@@ -314,7 +314,7 @@ public class SubstitutionVisitor extends FixedPointAstMapVisitor {
         if (!instruction.isStatic()) {
             if (c.params[0] instanceof IntConstant) //if the first param is a constant, then it is already a reference and it isn't in the varTypeTable, instead we need to ask SPF for it.
                 currClassName = ti.getHeap().get(((IntConstant) c.params[0]).getValue()).getClassInfo().getName();
-            else if (VeritestingListener.simplify &&
+            else if (VeritestingListener.simplifyConfig &&
                     dynRegion.constantsTable != null &&
                     dynRegion.constantsTable.lookup((Variable) c.params[0]) instanceof IntConstant) { //check if we can find it in the constant table.
 
