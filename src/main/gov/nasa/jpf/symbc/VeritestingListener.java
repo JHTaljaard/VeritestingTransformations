@@ -94,7 +94,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
     public static long solverAllocTime = 0;
     public static long cleanupTime = 0;
     public static int solverCount = 0;
-    public static final int maxStaticExplorationDepth = 2;
+    public static final int maxStaticExplorationDepth = 0;
     public static boolean initializeTime = true;
     public static int veritestRegionCount = 0;
     private static long staticAnalysisDur;
@@ -187,8 +187,14 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
             if (conf.hasValue("simplify"))
                 simplifyConfig = conf.getBoolean("simplify");
 
-            if (conf.hasValue("fixedPoint"))
+            if (conf.hasValue("fixedPoint")){
                 fixedPointConfig = conf.getBoolean("fixedPoint");
+            }
+
+            if(fixedPointConfig)
+                System.out.println("* running veritesting with fixedPoint enabled.");
+            else
+                System.out.println("* running veritesting with fixedPoint disabled.");
 
             StatisticManager.veritestingRunning = true;
             jpf.addPublisherExtension(ConsolePublisher.class, this);
@@ -630,7 +636,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
         publisher.publishTopicStart("VeritestingListener report:");
         long dynRunTime = (runEndTime - runStartTime) - staticAnalysisDur;
 
-//        pw.println(statisticManager.printAllRegionStatistics());
+        pw.println(statisticManager.printAllRegionStatistics());
 //        pw.println(statisticManager.printStaticAnalysisStatistics());
 //        pw.println(statisticManager.printAllExceptionStatistics());
 

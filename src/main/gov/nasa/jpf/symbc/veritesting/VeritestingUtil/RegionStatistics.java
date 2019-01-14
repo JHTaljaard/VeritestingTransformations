@@ -1,6 +1,7 @@
 package gov.nasa.jpf.symbc.veritesting.VeritestingUtil;
 
 import java.util.ArrayList;
+import java.util.concurrent.TimeUnit;
 
 public class RegionStatistics {
     public final String regionKey;
@@ -21,19 +22,22 @@ public class RegionStatistics {
      */
     public int concreteNumber = 0;
 
-    RegionStatistics(String regionKey, FailEntry failEntry, int veriHitNumber, int spfHitNumber, int concreteNumber) {
+    public long fixedPointTime = 0;
+
+    RegionStatistics(String regionKey, FailEntry failEntry, int veriHitNumber, int spfHitNumber, int concreteNumber, long fixedPointTime) {
         this.regionKey = regionKey;
         this.concreteNumber = concreteNumber;
         if (failEntry != null)
             this.failReasonList.add(failEntry);
         this.veriHitNumber = veriHitNumber;
         this.spfHitNumber = spfHitNumber;
+        this.fixedPointTime = fixedPointTime;
     }
 
     public String print() {
         String table = new String("\n*** Region Key = " + regionKey + "\n" +
-                "veriHitNumber | spfHitNumber | concreteHit\n" + veriHitNumber + "      | " + spfHitNumber
-                + "         | " + concreteNumber
+                "veriHitNumber | spfHitNumber | concreteHit  |  fixedPointTime \n" + veriHitNumber + "      | " + spfHitNumber
+                + "         | " + concreteNumber + "         | " +  TimeUnit.NANOSECONDS.toMillis(fixedPointTime) + " msec"
                 + "\n-------------------------------------------");
 
         table += "\nFail Reasons\n";
