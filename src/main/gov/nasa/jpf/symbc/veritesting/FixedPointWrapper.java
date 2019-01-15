@@ -138,6 +138,8 @@ public class FixedPointWrapper {
         if(iterationNumber == 1)
             fixedPointTime = 0;
 
+        long startTime = System.nanoTime();
+
         System.out.println("========================================= RUNNING FIXED POINT ITERATION # " + FixedPointWrapper.iterationNumber + "=========================================");
         if (FixedPointWrapper.iterationNumber > 1)
             FixedPointWrapper.resetIteration();
@@ -166,7 +168,10 @@ public class FixedPointWrapper {
             collectTransformationState(simplifyStmtVisitor);
         }
 
+        long endTime = System.nanoTime();
+        fixedPointTime += endTime - startTime;
         regionAfter = intermediateRegion;
+        System.out.println("time for fixed point iteration#" + iterationNumber + " = " + TimeUnit.NANOSECONDS.toMillis(endTime-startTime) + " msec");
         return regionAfter;
     }
 
@@ -177,12 +182,19 @@ public class FixedPointWrapper {
         FixedPointWrapper.regionBefore = dynRegion;
         DynamicRegion intermediateRegion;
 
+        long startTime = System.nanoTime();
+
         System.out.println("========================================= RUNNING HIGH-ORDER ONE EXTRA TIME AFTER FIXED POINT ITERATION# " + FixedPointWrapper.iterationNumber + "=========================================");
         FixedPointWrapper.resetChange();
 
         SubstitutionVisitor substitutionVisitor = SubstitutionVisitor.create(ti, dynRegion, 0, true);
         intermediateRegion = substitutionVisitor.execute();
         collectTransformationState(substitutionVisitor);
+
+        long endTime = System.nanoTime();
+        fixedPointTime += endTime - startTime;
+
+        System.out.println("time for fixed point iteration high order#" + iterationNumber + " = " + TimeUnit.NANOSECONDS.toMillis(endTime-startTime) +" msec");
 
         regionAfter = intermediateRegion;
         return regionAfter;
