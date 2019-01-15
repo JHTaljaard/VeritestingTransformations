@@ -1,0 +1,19 @@
+target=ISSTAExample5
+classpath=${jpf-symbc}/build/wbs
+sourcepath=${jpf-symbc}/src/wbs
+vm.storage.class=nil
+symbolic.debug=false
+
+
+######## paper Example ######
+symbolic.method=ISSTAExample.paperExampleNum(sym#sym#sym#sym#sym)
+
+symbolic.dp=z3bitvector
+#symbolic.minint=-100
+#symbolic.maxint=100
+listener = .symbc.VeritestingListener
+veritestingMode = 3
+symbolic.lazy = true
+veritestRegionExpectedCount=-1
+performanceMode=true
+simplify=true

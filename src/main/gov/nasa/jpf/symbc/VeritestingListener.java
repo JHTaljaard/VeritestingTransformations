@@ -251,17 +251,17 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
                             if (regionEndInsn != null) {
                                 throwException(new StaticRegionException("Unsupported region end instruction: " + regionEndInsn), INSTANTIATION);
                             }
-
                             DynamicRegion dynRegion = runVeritesting(ti, instructionToExecute, staticRegion, key);
                             Instruction nextInstruction = setupSPF(ti, instructionToExecute, dynRegion);
                             ++veritestRegionCount;
                             ti.setNextPC(nextInstruction);
                             statisticManager.updateVeriSuccForRegion(key);
 
-                            System.out.println("------------- Region was successfully veritested --------------- ");
+                            System.out.println("------------- Region was successfully veritested ---------------\n ");
                         } else {
                             runVeritestingWithSPF(ti, vm, instructionToExecute, staticRegion, key);
                         }
+                        System.out.println("Time for FixedPoint for region = " + TimeUnit.NANOSECONDS.toMillis(FixedPointWrapper.getFixedPointTime()) + "msec\n");
                     } else
                         statisticManager.updateConcreteHitStatForRegion(key);
                 }
@@ -372,8 +372,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
     }
 
 
-    private DynamicRegion runVeritesting(ThreadInfo ti, Instruction instructionToExecute, StaticRegion staticRegion,
-                                         String key) throws Exception {
+    private DynamicRegion runVeritesting(ThreadInfo ti, Instruction instructionToExecute, StaticRegion staticRegion, String key) throws Exception {
         Exception transformationException = null;
         System.out.println("\n---------- STARTING Transformations for conditional region: " + key +
                 "\n" + PrettyPrintVisitor.print(staticRegion.staticStmt) + "\n");
@@ -609,6 +608,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
      * @param ti Current running thread.
      */
     private void discoverRegions(ThreadInfo ti) {
+        long sstartTime = System.nanoTime();
         Config conf = ti.getVM().getConfig();
         String[] allClassPaths = conf.getStringArray("classpath");
         ArrayList<String> classPath = new ArrayList<>();
@@ -627,6 +627,9 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
         staticAnalysisDur = endTime - startTime;
         statisticManager.collectStaticAnalysisMetrics(VeritestingMain.veriRegions);
         StaticRegionException.staticAnalysisComplete();
+        long ssendTime = System.nanoTime();
+
+        System.out.println("time taken to discover region is = " + TimeUnit.NANOSECONDS.toMillis(ssendTime-sstartTime));
     }
 
 
@@ -636,7 +639,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
         publisher.publishTopicStart("VeritestingListener report:");
         long dynRunTime = (runEndTime - runStartTime) - staticAnalysisDur;
 
-        pw.println(statisticManager.printAllRegionStatistics());
+//        pw.println(statisticManager.printAllRegionStatistics());
 //        pw.println(statisticManager.printStaticAnalysisStatistics());
 //        pw.println(statisticManager.printAllExceptionStatistics());
 

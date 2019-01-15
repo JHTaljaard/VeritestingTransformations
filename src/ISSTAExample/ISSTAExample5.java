@@ -10,6 +10,8 @@ public class ISSTAExample {
         ArrayList<Integer> numberList = new ArrayList<Integer>();
 
         (new ISSTAExample()).paperExampleNum(1,1, 1,1,1);
+
+
     }
 
 
