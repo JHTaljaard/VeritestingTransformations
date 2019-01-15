@@ -608,7 +608,7 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
      * @param ti Current running thread.
      */
     private void discoverRegions(ThreadInfo ti) {
-        long sstartTime = System.nanoTime();
+        long startTime = System.nanoTime();
         Config conf = ti.getVM().getConfig();
         String[] allClassPaths = conf.getStringArray("classpath");
         ArrayList<String> classPath = new ArrayList<>();
@@ -621,15 +621,11 @@ public class VeritestingListener extends PropertyListenerAdapter implements Publ
         }
         String className = conf.getString("target");
         VeritestingMain veritestingMain = new VeritestingMain(ti, className + ".class");
-        long startTime = System.nanoTime();
         veritestingMain.analyzeForVeritesting(classPath, className);
         long endTime = System.nanoTime();
         staticAnalysisDur = endTime - startTime;
         statisticManager.collectStaticAnalysisMetrics(VeritestingMain.veriRegions);
         StaticRegionException.staticAnalysisComplete();
-        long ssendTime = System.nanoTime();
-
-        System.out.println("time taken to discover region is = " + TimeUnit.NANOSECONDS.toMillis(ssendTime-sstartTime));
     }
 
 
