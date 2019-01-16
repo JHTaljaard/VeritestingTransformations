@@ -3,13 +3,13 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ISSTAExample {
+public class ISSTAExample10 {
 
     public static void main(String[] args) {
 
         ArrayList<Integer> numberList = new ArrayList<Integer>();
 
-        (new ISSTAExample()).paperExampleNum(1,1, 1,1,1, 1,1 ,1,1, 10);
+        (new ISSTAExample10()).paperExampleNum(1,1, 1,1,1, 1,1 ,1,1, 10);
 
 
     }

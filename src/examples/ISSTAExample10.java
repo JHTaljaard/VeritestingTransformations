@@ -3,21 +3,21 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class ISSTAExample5 {
+public class ISSTAExample10 {
 
     public static void main(String[] args) {
 
         ArrayList<Integer> numberList = new ArrayList<Integer>();
 
-        (new ISSTAExample5()).paperExampleNum(1,1, 1,1,1);
+        (new ISSTAExample10()).paperExampleNum(1,1, 1,1,1, 1,1 ,1,1, 1);
 
 
     }
 
 
-    public int paperExampleNum(int x1, int x2, int x3, int x4, int x5) {
+    public int paperExampleNum(int x1, int x2, int x3, int x4, int x5, int x6, int x7, int x8, int x9, int x10) {
 
-        ArrayList<Integer> numberList = new ArrayList<Integer>(Arrays.asList(x1, x2, x3, x4, x5));
+        ArrayList<Integer> numberList = new ArrayList<Integer>(Arrays.asList(x1, x2, x3, x4, x5, x6, x7, x8, x9, x10));
 
         int wordCount = 0;
         boolean inWord;
